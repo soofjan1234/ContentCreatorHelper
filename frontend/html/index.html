@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容创作者助手 - 导航页</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header class="navbar">
+            <h1 class="logo">
+                <i class="fas fa-pencil-alt"></i>
+                内容创作者助手
+            </h1>
+
+        </header>
+
+        <section class="central-buttons">
+            <div class="central-btn-row">
+                <div class="central-btn" id="cleanFiles">
+                    <i class="fas fa-broom"></i>
+                    <h3>清理文件</h3>
+                    <p>整理和清理临时文件</p>
+                </div>
+                <div class="central-btn" id="generateContent">
+                    <i class="fas fa-pencil-alt"></i>
+                    <h3>内容生成</h3>
+                    <p>自动生成高质量内容</p>
+                </div>
+            </div>
+            <div class="central-btn-row">
+                <div class="central-btn" id="generateCover">
+                    <i class="fas fa-image"></i>
+                    <h3>封面生成</h3>
+                    <p>创建精美的封面图片</p>
+                </div>
+                <div class="central-btn" id="publishContent">
+                    <i class="fas fa-paper-plane"></i>
+                    <h3>发布完善</h3>
+                    <p>准备和完善发布内容</p>
+                </div>
+                <div class="central-btn" id="generateAd">
+                    <i class="fas fa-ad"></i>
+                    <h3>广告生成</h3>
+                    <p>创建吸引人的广告内容</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 确认对话框 -->
+        <div class="modal" id="confirm-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>确认清理</h3>
+                    <button class="close-btn" id="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要清空data/material和data/tip目录下的所有文件吗？</p>
+                    <p class="warning">此操作不可恢复！</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancel-clean">取消</button>
+                    <button class="btn btn-danger" id="confirm-clean">确认清理</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 成功提示 -->
+        <div class="toast" id="success-toast">
+            <i class="fas fa-check-circle"></i>
+            <span>清理完成！</span>
+        </div>
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>
