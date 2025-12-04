@@ -35,7 +35,7 @@ class MaterialLoader:
     
     def _split_content(self, content):
         """
-        将内容按1.、2.等格式分块
+        将内容按#符号分块
         
         Args:
             content: 原始文本内容
@@ -43,18 +43,28 @@ class MaterialLoader:
         Returns:
             list: 分块后的内容数组
         """
-        # 使用正则表达式匹配1.、2.等格式的分块标记
-        pattern = r'^(\d+)\.'
-        
-        # 使用split方法按标记分块
-        parts = re.split(r'(\d+\.\s+)', content)
+        # 使用正则表达式匹配以#开头的行作为分块标记
+        # 使用捕获组保留#符号和空格，以便后续拼接
+        parts = re.split(r'(#\s+)', content)
         
         # 整理结果，确保每个块都包含正确的标记和内容
         blocks = []
+        
+        # 如果parts长度为1，说明没有找到#符号，返回整个内容作为一个块
+        if len(parts) == 1:
+            blocks.append(parts[0].strip())
+            return blocks
+        
+        # 从第二个元素开始处理（第一个元素可能是空字符串）
         for i in range(1, len(parts), 2):
-            # 拼接标记和内容
-            block = parts[i] + (parts[i+1] if i+1 < len(parts) else '')
-            blocks.append(block.strip())
+            # 确保有内容部分
+            if i+1 < len(parts):
+                # 拼接#符号标记和内容
+                block = parts[i] + parts[i+1]
+                blocks.append(block.strip())
+            else:
+                # 如果只剩下#符号标记，也添加到结果中
+                blocks.append(parts[i].strip())
         
         return blocks
 

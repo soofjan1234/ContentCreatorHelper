@@ -5,6 +5,12 @@ window.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
     const titleResult = document.getElementById('title-result');
     const hookResult = document.getElementById('hook-result');
+    const backBtn = document.getElementById('back-btn');
+    
+    // 返回按钮点击事件
+    backBtn.addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
     
     // 内容容器
     const materialCarousel = document.getElementById('material-carousel');
@@ -200,21 +206,25 @@ window.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else {
-                // 生成标题列表HTML
-                const titlesHtml = content.titles.map((title, index) => `
-                    <div class="result-item">
-                        <span class="item-number">${index + 1}</span>
-                        <p class="item-content">${title}</p>
-                    </div>
-                `).join('');
+                // 合并标题为一个连续的文本，并添加编号，序号之间使用换行
+                const mergedTitles = content.titles.map((title, index) => `${index + 1}. ${title}`).join('\n');
                 
-                // 生成钩子列表HTML
-                const hooksHtml = content.hooks.map((hook, index) => `
+                // 合并钩子为一个连续的文本，并添加编号，序号之间使用换行
+                const mergedHooks = content.hooks.map((hook, index) => `${index + 1}. ${hook}`).join('\n');
+                
+                // 生成标题HTML
+                const titlesHtml = `
                     <div class="result-item">
-                        <span class="item-number">${index + 1}</span>
-                        <p class="item-content">${hook}</p>
+                        <p class="item-content">${mergedTitles}</p>
                     </div>
-                `).join('');
+                `;
+                
+                // 生成钩子HTML
+                const hooksHtml = `
+                    <div class="result-item">
+                        <p class="item-content">${mergedHooks}</p>
+                    </div>
+                `;
                 
                 card.innerHTML = `
                     <h3 class="result-card-title">
