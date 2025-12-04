@@ -116,15 +116,27 @@ class ContentCreatorService:
             print(f"生成钩子失败: {str(e)}")
             return []
     
-    def create_content(self):
-        """主函数：读取素材和技巧，生成标题和钩子"""
-        # 读取素材和技巧
-        material_content = self.read_file(self.material_file)
-        title_tips = self.read_file(self.title_tips_file)
-        hook_tips = self.read_file(self.hook_tips_file)
+    def create_content(self, material_content=None, title_tips=None, hook_tips=None):
+        """主函数：生成标题和钩子
+        
+        Args:
+            material_content: 素材内容字符串
+            title_tips: 标题技巧字符串
+            hook_tips: 钩子技巧字符串
+            
+        Returns:
+            包含titles和hooks的字典
+        """
+        # 如果没有传入参数，从文件读取
+        if not material_content:
+            material_content = self.read_file(self.material_file)
+        if not title_tips:
+            title_tips = self.read_file(self.title_tips_file)
+        if not hook_tips:
+            hook_tips = self.read_file(self.hook_tips_file)
         
         if not all([material_content, title_tips, hook_tips]):
-            print("无法读取必要的文件，生成内容失败")
+            print("无法获取必要的内容，生成内容失败")
             return None
         
         # 生成标题和钩子

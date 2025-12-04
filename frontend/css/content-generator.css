@@ -1,0 +1,341 @@
+/* 内容生成页样式 */
+.content-generator {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* 轮播图样式已移除 */
+
+/* 轮播图导航按钮样式已移除 */
+
+
+
+/* 轮播图指示器样式已移除 */
+
+/* 区域标题 */
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #4a90e2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.section-title i {
+    font-size: 24px;
+    animation: pulse 2s infinite;
+}
+
+/* 素材展示区 */
+.material-section {
+    margin-bottom: 50px;
+}
+
+.material-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.material-card {
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    width: 250px; /* 设置固定宽度 */
+    cursor: pointer;
+}
+
+.material-card:hover {
+    background: rgba(32, 32, 64, 0.9);
+    border-color: rgba(74, 144, 226, 0.8);
+    /* 移除悬浮放大效果，只保留背景和边框变化 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 10px rgba(74, 144, 226, 0.1);
+}
+
+.material-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    background: rgba(74, 144, 226, 0.1);
+    border-radius: 8px;
+}
+
+.material-preview i {
+    font-size: 32px;
+    color: #4a90e2;
+    text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.material-info h3 {
+    font-size: 18px;
+    color: #e0e0e0;
+    margin: 0;
+}
+
+.material-preview-text {
+    font-size: 14px;
+    color: #9090a0;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 操作区 */
+.action-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.generate-btn {
+    background: linear-gradient(135deg, #4a90e2, #65439a);
+    color: white;
+    font-size: 18px;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3), 0 0 20px rgba(74, 144, 226, 0.2);
+}
+
+.generate-btn:hover {
+    background: linear-gradient(135deg, #65439a, #4a90e2);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(74, 144, 226, 0.5), 0 0 30px rgba(74, 144, 226, 0.3);
+}
+
+.generate-btn i {
+    font-size: 20px;
+}
+
+/* 结果展示区 */
+.result-section {
+    margin-bottom: 40px;
+}
+
+.result-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.result-card {
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.4);
+    border-radius: 15px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    width: 280px; /* 设置固定宽度 */
+    cursor: pointer;
+    /* 移除固定高度限制，允许内容自然扩展 */
+    min-height: auto;
+    height: auto;
+}
+
+.result-card:hover {
+    background: rgba(32, 32, 64, 0.9);
+    border-color: rgba(74, 144, 226, 0.8);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(74, 144, 226, 0.2);
+}
+
+.result-card-title {
+    font-size: 18px;
+    color: #4a90e2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.result-card-title i {
+    font-size: 20px;
+}
+
+.result-content {
+    padding: 15px;
+    background: rgba(74, 144, 226, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(74, 144, 226, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    /* 移除固定高度限制，允许内容自然扩展 */
+    height: auto;
+    overflow: visible;
+}
+
+/* 标题和钩子之间的分界线 */
+.result-title {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+    position: relative;
+}
+
+.result-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: #4a90e2;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+/* 标题和钩子内容样式 */
+.result-title h4,
+.result-hook h4 {
+    font-size: 16px;
+    color: #4a90e2;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.result-title p,
+.result-hook p {
+    font-size: 14px;
+    color: #e0e0e0;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 结果列表样式 */
+.result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.result-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: rgba(74, 144, 226, 0.1);
+    border-left: 3px solid #4a90e2;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.result-item:hover {
+    background: rgba(74, 144, 226, 0.15);
+    transform: translateX(5px);
+}
+
+.item-number {
+    background: #4a90e2;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.item-content {
+    font-size: 14px;
+    color: #cccccc;
+    line-height: 1.6;
+    margin: 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+}
+
+/* 加载状态样式 */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #3498db;
+}
+
+.loading-state i {
+    font-size: 36px;
+    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+}
+
+/* 错误状态样式 */
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: #e74c3c;
+    text-align: center;
+}
+
+.error-state i {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+/* 旋转动画 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 整合后的结果卡片内部样式 */
+.result-title, .result-hook {
+    margin-bottom: 20px;
+}
+
+.result-title:last-child, .result-hook:last-child {
+    margin-bottom: 0;
+}
+
+.result-title h4, .result-hook h4 {
+    color: #4a90e2;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.result-title p, .result-hook p {
+    color: #b0c4de;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.result-content p {
+    color: #b0c4de;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.result-content .placeholder {
+    color: #607080;
+    font-style: italic;
+}

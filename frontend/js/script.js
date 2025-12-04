@@ -23,8 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-
-    
     // 处理按钮操作
     function handleButtonAction(btnId) {
         // 中央按钮ID映射
@@ -46,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'content':
                 // 跳转到内容生成页
-                console.log('跳转到内容生成页');
+                window.location.href = 'content-generator.html';
                 break;
             case 'cover':
                 // 跳转到封面生成页

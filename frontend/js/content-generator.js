@@ -1,0 +1,241 @@
+// 内容生成页JavaScript
+
+// 页面加载完成事件
+window.addEventListener('DOMContentLoaded', () => {
+    const generateBtn = document.getElementById('generate-btn');
+    const titleResult = document.getElementById('title-result');
+    const hookResult = document.getElementById('hook-result');
+    
+    // 内容容器
+    const materialCarousel = document.getElementById('material-carousel');
+    const resultCarousel = document.getElementById('result-carousel');
+    
+    // 内容数据
+    let materials = [];
+    let generatedContents = [];
+    
+    // 页面加载时动态加载素材
+    loadMaterialsFromAPI();
+    
+    // 生成按钮点击事件
+    generateBtn.addEventListener('click', () => {
+        // 调用API生成内容
+        generateContentFromAPI();
+    });
+    
+    // 从API加载素材函数
+    function loadMaterialsFromAPI() {
+        // 显示加载状态
+        showLoading('material-carousel', '正在加载素材...');
+        
+        // 调用API获取素材
+        fetch('/api/load-material?id=1')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络请求失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // 将API返回的素材块转换为素材数组
+                    materials = data.blocks.map((block, index) => ({
+                        id: index + 1,
+                        title: `素材 ${index + 1}`,
+                        content: block.substring(0, 50) + '...', // 截取前50个字符作为预览
+                        fullContent: block // 保存完整内容用于生成
+                    }));
+                    
+                    // 生成素材卡片
+                    renderMaterialCards();
+                } else {
+                    showError('material-carousel', data.error);
+                }
+            })
+            .catch(error => {
+                showError('material-carousel', `加载素材失败: ${error.message}`);
+            });
+    }
+    
+    // 从API生成内容函数
+    function generateContentFromAPI() {
+        // 禁用按钮，显示加载状态
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
+        
+        // 显示结果加载状态
+        showLoading('result-carousel', '正在生成内容...');
+        
+        // 准备请求数据
+        const requestData = {
+            // 传递所有素材的完整内容数组
+            material_contents: materials.map(m => m.fullContent)
+        };
+        
+        // 调用实际的内容生成API
+        fetch('/api/generate-content', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('网络请求失败');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // 创建生成结果对象，包含所有素材的生成结果
+                generatedContents = data.data.results.map((result, index) => ({
+                    materialIndex: result.material_index,
+                    titles: result.titles || [],
+                    hooks: result.hooks || [],
+                    error: result.error,
+                    id: Date.now() + index
+                }));
+                
+                // 更新结果显示
+                renderResults();
+            } else {
+                showError('result-carousel', data.error);
+            }
+        })
+        .catch(error => {
+            showError('result-carousel', `生成内容失败: ${error.message}`);
+        })
+        .finally(() => {
+            // 恢复按钮状态
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> 生成内容';
+        });
+    }
+    
+    // 显示加载状态
+    function showLoading(elementSelector, message) {
+        const element = document.querySelector(`#${elementSelector}`) || document.querySelector(elementSelector);
+        if (element) {
+            element.innerHTML = `
+                <div class="loading-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    }
+    
+    // 显示错误信息
+    function showError(elementSelector, message) {
+        const element = document.querySelector(`#${elementSelector}`) || document.querySelector(elementSelector);
+        if (element) {
+            element.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+    }
+    
+    // 生成素材卡片
+    function renderMaterialCards() {
+        materialCarousel.innerHTML = '';
+        
+        materials.forEach(material => {
+            const card = document.createElement('div');
+            card.className = 'material-card';
+            card.innerHTML = `
+                <div class="material-info">
+                    <h3>${material.title}</h3>
+                    <p class="material-preview-text">${material.content}</p>
+                </div>
+            `;
+            materialCarousel.appendChild(card);
+        });
+    }
+    
+
+    
+    // 渲染生成结果
+    function renderResults() {
+        // 如果没有结果，显示默认提示
+        if (generatedContents.length === 0) {
+            resultCarousel.innerHTML = `
+                <div class="result-card" id="content-result">
+                    <h3 class="result-card-title">
+                        生成的内容
+                    </h3>
+                    <div class="result-content">
+                        <div class="result-title" id="title-result">
+                            <p class="placeholder">点击"生成内容"按钮获取生成的标题</p>
+                        </div>
+                        <div class="result-hook" id="hook-result">
+                            <p class="placeholder">点击"生成内容"按钮获取生成的钩子</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        // 清空结果网格
+        resultCarousel.innerHTML = '';
+        
+        // 生成结果卡片
+        generatedContents.forEach(content => {
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            
+            // 检查是否有错误
+            if (content.error) {
+                card.innerHTML = `
+                    <h3 class="result-card-title">
+                        素材 ${content.materialIndex} - 生成失败
+                    </h3>
+                    <div class="result-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>${content.error}</p>
+                    </div>
+                `;
+            } else {
+                // 生成标题列表HTML
+                const titlesHtml = content.titles.map((title, index) => `
+                    <div class="result-item">
+                        <span class="item-number">${index + 1}</span>
+                        <p class="item-content">${title}</p>
+                    </div>
+                `).join('');
+                
+                // 生成钩子列表HTML
+                const hooksHtml = content.hooks.map((hook, index) => `
+                    <div class="result-item">
+                        <span class="item-number">${index + 1}</span>
+                        <p class="item-content">${hook}</p>
+                    </div>
+                `).join('');
+                
+                card.innerHTML = `
+                    <h3 class="result-card-title">
+                        素材 ${content.materialIndex} 生成的内容
+                    </h3>
+                    <div class="result-content">
+                        <div class="result-title">
+                            <h4>标题</h4>
+                            <div class="result-list">${titlesHtml}</div>
+                        </div>
+                        <div class="result-hook">
+                            <h4>钩子</h4>
+                            <div class="result-list">${hooksHtml}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultCarousel.appendChild(card);
+        });
+    }
+    
+
+});
