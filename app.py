@@ -21,6 +21,12 @@ def serve_static(filename):
         return send_from_directory(frontend_path, filename)
     return send_from_directory(os.path.join(frontend_path, 'html'), filename)
 
+# 数据文件路由 - 处理data文件夹下的资源
+@app.route('/data/<path:filename>')
+def serve_data(filename):
+    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+    return send_from_directory(data_path, filename)
+
 # 加载素材API接口
 @app.route('/api/load-material', methods=['GET'])
 def load_material():

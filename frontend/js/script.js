@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'cover':
                 // 跳转到封面生成页
-                console.log('跳转到封面生成页');
+                window.location.href = 'cover-generator.html';
                 break;
             case 'publish':
                 // 跳转到发布完善页
