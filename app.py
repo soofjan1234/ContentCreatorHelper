@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 from backend.controller.load import MaterialLoadController
 from backend.controller.content.content_controller import ContentController
+from backend.controller.cover.cover_controller import CoverController
 
 app = Flask(__name__)
 CORS(app)
@@ -92,6 +93,32 @@ def generate_content():
         }
     }), 200
 
+
+# 获取蒙版图片列表API接口
+@app.route('/api/get-mask-images', methods=['GET'])
+def get_mask_images():
+    controller = CoverController()
+    success, data = controller.get_to_ps_images()
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 生成蒙版封面API接口
+@app.route('/api/generate-mask-cover', methods=['POST'])
+def generate_mask_cover():
+    controller = CoverController()
+    
+    # 支持循环调用，根据前端需求可以传递图片列表
+    images = request.json.get('images', [])
+    
+    # 调用controller的方法生成蒙版封面（controller内部会处理循环）
+    success, data = controller.generate_cover_with_mask(images)
+    
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
 
 if __name__ == '__main__':
     print("Starting Instagram Robot Service...")

@@ -4,6 +4,7 @@ import os
 class CoverGenerator:
     def __init__(self):
         self.data_dir = "d:/PythonWorkspace/contentCreatorHelper/data"
+        self.to_ps_dir = os.path.join(self.data_dir, "toPs")
         self.input_image_path = os.path.join(self.data_dir, "1.jpg")
         self.output_image_path = os.path.join(self.data_dir, "output_with_mask.jpg")
     
@@ -63,10 +64,23 @@ class CoverGenerator:
             print(f"保存图片失败: {str(e)}")
             return False
     
-    def generate_cover_with_mask(self):
-        """生成带有60%透明度蒙版的封面"""
+    def generate_cover_with_mask(self, image_name=None):
+        """生成带有60%透明度蒙版的封面
+        
+        Args:
+            image_name: 可选，指定要处理的图片名称（来自data/toPs目录）
+            如果不指定，则使用默认图片
+        """
+        # 确定要处理的图片路径
+        if image_name:
+            # 使用指定的图片（来自data/toPs目录）
+            image_path = os.path.join(self.to_ps_dir, image_name)
+        else:
+            # 使用默认图片
+            image_path = self.input_image_path
+        
         # 打开原始图片
-        image = self.open_image(self.input_image_path)
+        image = self.open_image(image_path)
         if not image:
             return None
         
@@ -76,8 +90,13 @@ class CoverGenerator:
         # 应用蒙版
         result = self.apply_mask(image, mask)
         
-        # 保存结果
-        self.save_image(result, self.output_image_path)
+        # 保存结果（如果是指定图片，则使用不同的输出文件名）
+        if image_name:
+            output_path = os.path.join(self.data_dir, f"output_{os.path.splitext(image_name)[0]}_with_mask.jpg")
+        else:
+            output_path = self.output_image_path
+        
+        self.save_image(result, output_path)
         
         return result
 
