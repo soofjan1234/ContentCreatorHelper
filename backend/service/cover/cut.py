@@ -3,7 +3,9 @@ import os
 
 class ImageCutter:
     def __init__(self):
-        self.data_dir = "d:/PythonWorkspace/contentCreatorHelper/data"
+        # 获取项目根目录
+        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        self.data_dir = os.path.join(self.project_root, "data")
         self.input_image_path = os.path.join(self.data_dir, "1.jpg")
         self.output_dir = self.data_dir
     

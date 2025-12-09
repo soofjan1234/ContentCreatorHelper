@@ -16,9 +16,11 @@ class ContentCreatorService:
         )
         self.model_name = "deepseek-v3-1-terminus"
         
+        # 获取项目根目录
+        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         # 文件路径
-        self.data_dir = "d:/PythonWorkspace/contentCreatorHelper/data"
-        self.material_file = os.path.join(self.data_dir, "material", "xx.txt")
+        self.data_dir = os.path.join(self.project_root, "data")
+        self.material_file = os.path.join(self.data_dir, "material", "1.txt")
         self.title_tips_file = os.path.join(self.data_dir, "tip", "title.txt")
         self.hook_tips_file = os.path.join(self.data_dir, "tip", "hook.txt")
     
@@ -49,7 +51,12 @@ class ContentCreatorService:
                     4. 不要说教，要有价值
                     5. 问题提问必须是反认知或痛点场景
 
-                    请以JSON格式返回结果，只需要包含titles数组，不要包含其他内容。
+                    请严格按照以下格式返回结果：
+                    - 必须是JSON格式
+                    - 必须返回一个纯字符串数组，数组名为"titles"
+                    - 每个标题必须是字符串，不能是对象或其他类型
+                    - 不要包含任何额外的解释或说明
+                    - 示例格式：{{"titles": ["标题1", "标题2", "标题3"]}}
                     """
             
             response = self.client.chat.completions.create(
@@ -92,7 +99,12 @@ class ContentCreatorService:
                         4. 能够吸引观众继续观看
                         5. 确保每个钩子的结构和表达方式都有明显差异，避免内容重合
 
-                        请以JSON格式返回结果，只需要包含hooks数组，不要包含其他内容。
+                        请严格按照以下格式返回结果：
+                        - 必须是JSON格式
+                        - 必须返回一个纯字符串数组，数组名为"hooks"
+                        - 每个钩子必须是字符串，不能是对象或其他类型
+                        - 不要包含任何额外的解释或说明
+                        - 示例格式：{{"hooks": ["钩子1", "钩子2", "钩子3"]}}
                         """
             
             response = self.client.chat.completions.create(

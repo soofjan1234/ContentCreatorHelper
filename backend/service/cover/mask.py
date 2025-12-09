@@ -3,7 +3,9 @@ import os
 
 class CoverGenerator:
     def __init__(self):
-        self.data_dir = "d:/PythonWorkspace/contentCreatorHelper/data"
+        # 获取项目根目录
+        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        self.data_dir = os.path.join(self.project_root, "data")
         self.to_ps_dir = os.path.join(self.data_dir, "toPs")
         self.input_image_path = os.path.join(self.data_dir, "1.jpg")
         self.output_image_path = os.path.join(self.data_dir, "output_with_mask.jpg")
