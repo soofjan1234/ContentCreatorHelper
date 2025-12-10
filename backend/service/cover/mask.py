@@ -4,11 +4,12 @@ import os
 class CoverGenerator:
     def __init__(self):
         # 获取项目根目录
-        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))        
         self.data_dir = os.path.join(self.project_root, "data")
         self.to_ps_dir = os.path.join(self.data_dir, "toPs")
+        self.mask_output_dir = os.path.join(self.data_dir, "cover", "mask")
         self.input_image_path = os.path.join(self.data_dir, "1.jpg")
-        self.output_image_path = os.path.join(self.data_dir, "output_with_mask.jpg")
+        self.output_image_path = os.path.join(self.mask_output_dir, "output_with_mask.jpg")
     
     def open_image(self, image_path):
         """打开图片"""
@@ -94,7 +95,7 @@ class CoverGenerator:
         
         # 保存结果（如果是指定图片，则使用不同的输出文件名）
         if image_name:
-            output_path = os.path.join(self.data_dir, f"output_{os.path.splitext(image_name)[0]}_with_mask.jpg")
+            output_path = os.path.join(self.mask_output_dir, f"output_{os.path.splitext(image_name)[0]}_with_mask.jpg")
         else:
             output_path = self.output_image_path
         

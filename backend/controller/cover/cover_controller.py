@@ -1,4 +1,5 @@
 from backend.service.cover.mask import CoverGenerator
+from backend.service.cover.cut import ImageCutter
 import os
 
 class CoverController:
@@ -8,23 +9,7 @@ class CoverController:
         self.data_dir = os.path.join(self.project_root, "data")
         self.to_ps_dir = os.path.join(self.data_dir, "toPs")
         self.generator = CoverGenerator()
-    
-    def get_to_ps_images(self):
-        """获取data/toPs目录下的图片列表"""
-        try:
-            # 检查目录是否存在
-            if not os.path.exists(self.to_ps_dir):
-                return False, {"error": "目录不存在"}
-            
-            # 获取目录下所有文件
-            files = os.listdir(self.to_ps_dir)
-            
-            # 过滤出图片文件（根据扩展名）
-            image_files = [f for f in files if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp"))]
-            
-            return True, {"images": image_files}
-        except Exception as e:
-            return False, {"error": str(e)}
+        self.cutter = ImageCutter()
     
     def generate_cover_with_mask(self, image_names=None):
         """生成带有蒙版的封面
@@ -35,10 +20,9 @@ class CoverController:
         try:
             # 如果没有指定图片名称，获取所有图片
             if not image_names:
-                success, data = self.get_to_ps_images()
-                if not success:
-                    return False, data
-                image_names = data["images"]
+                # 从toPs目录获取图片
+                files = os.listdir(self.to_ps_dir)
+                image_names = [f for f in files if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp"))]
             
             # 循环处理每个图片
             results = []
@@ -51,6 +35,49 @@ class CoverController:
                         results.append({"image": image_name, "success": True, "message": "蒙版封面生成成功"})
                     else:
                         results.append({"image": image_name, "success": False, "error": "蒙版封面生成失败"})
+                except Exception as e:
+                    results.append({"image": image_name, "success": False, "error": str(e)})
+            
+            return True, {"results": results}
+        except Exception as e:
+            return False, {"error": str(e)}
+    
+    def generate_cropped_image(self, image_names=None, aspect_ratio="4:3"):
+        """生成裁剪图片
+        
+        Args:
+            image_names: 可选，要处理的图片名称数组（来自data/cover/mask目录）。如果为None或空数组，将处理所有图片。
+            aspect_ratio: 裁剪比例，当前固定使用4:3
+        """
+        try:
+            # 循环处理每个图片
+            results = []
+            for image_name in image_names:
+                try:
+                    # 打开图片
+                    image_path = os.path.join(self.data_dir, "cover", "mask", image_name)
+                    
+                    # 生成输出文件名
+                    output_filename = f"output_{os.path.splitext(image_name)[0]}_4:3_cropped.jpg"
+                    
+                    # 直接调用service层的cut_to_3_4方法裁剪图片
+                    # 注意：cut_to_3_4方法默认使用self.input_image_path，需要修改为我们的图片路径
+                    # 先保存当前input_image_path
+                    old_input_path = self.cutter.input_image_path
+                    
+                    # 设置为当前图片路径
+                    self.cutter.input_image_path = image_path
+                    
+                    # 调用cut_to_3_4方法，该方法会自动保存图片
+                    result = self.cutter.cut_to_3_4()
+                    
+                    # 恢复原始input_image_path
+                    self.cutter.input_image_path = old_input_path
+                    
+                    if result:
+                        results.append({"image": image_name, "success": True, "message": "裁剪图片生成成功"})
+                    else:
+                        results.append({"image": image_name, "success": False, "error": "裁剪图片生成失败"})
                 except Exception as e:
                     results.append({"image": image_name, "success": False, "error": str(e)})
             

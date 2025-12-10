@@ -1,3 +1,3 @@
-from .material_controller import MaterialLoadController
+from .load_controller import LoadController
 
-__all__ = ['MaterialLoadController']
+__all__ = ['LoadController']

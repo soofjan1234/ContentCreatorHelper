@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
-from backend.controller.load import MaterialLoadController
+from backend.controller.load.load_controller import LoadController
 from backend.controller.content.content_controller import ContentController
 from backend.controller.cover.cover_controller import CoverController
 
@@ -32,7 +32,7 @@ def serve_data(filename):
 @app.route('/api/load-material', methods=['GET'])
 def load_material():
     material_id = request.args.get('id', default='1', type=str)
-    controller = MaterialLoadController()
+    controller = LoadController()
     success, data = controller.load_material(material_id)
     if success:
         return jsonify(data), 200
@@ -94,11 +94,21 @@ def generate_content():
     }), 200
 
 
-# 获取蒙版图片列表API接口
-@app.route('/api/get-mask-images', methods=['GET'])
-def get_mask_images():
-    controller = CoverController()
+# 获取toPs图片列表API接口
+@app.route('/api/get_to_ps_images', methods=['GET'])
+def get_to_ps_images():
+    controller = LoadController()
     success, data = controller.get_to_ps_images()
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 获取蒙版图片列表API接口
+@app.route('/api/get_mask_images', methods=['GET'])
+def get_mask_images():
+    controller = LoadController()
+    success, data = controller.get_mask_images()
     if success:
         return jsonify(data), 200
     else:
@@ -114,6 +124,23 @@ def generate_mask_cover():
     
     # 调用controller的方法生成蒙版封面（controller内部会处理循环）
     success, data = controller.generate_cover_with_mask(images)
+    
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 生成裁剪图片API接口
+@app.route('/api/generate-cropped-image', methods=['POST'])
+def generate_cropped_image():
+    controller = CoverController()
+    
+    # 支持循环调用，根据前端需求可以传递图片列表
+    images = request.json.get('images', [])
+    aspect_ratio = request.json.get('aspect_ratio', 'free')
+    
+    # 调用controller的方法生成裁剪图片（controller内部会处理循环）
+    success, data = controller.generate_cropped_image(images, aspect_ratio)
     
     if success:
         return jsonify(data), 200

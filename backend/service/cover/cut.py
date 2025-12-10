@@ -8,6 +8,11 @@ class ImageCutter:
         self.data_dir = os.path.join(self.project_root, "data")
         self.input_image_path = os.path.join(self.data_dir, "1.jpg")
         self.output_dir = self.data_dir
+        self.crop_output_dir = os.path.join(self.data_dir, "cover", "crop")
+        
+        # 确保输出目录存在
+        if not os.path.exists(self.crop_output_dir):
+            os.makedirs(self.crop_output_dir)
     
     def open_image(self, image_path):
         """打开图片"""
@@ -65,9 +70,13 @@ class ImageCutter:
         # 裁剪图片
         cropped_image = image.crop(crop_box)
         
-        # 保存裁剪后的图片
-        output_path = os.path.join(self.output_dir, output_filename)
+        # 保存裁剪后的图片到指定目录
+        output_path = os.path.join(self.crop_output_dir, output_filename)
         try:
+            # 如果是RGBA模式，转换为RGB模式，因为JPEG不支持透明度
+            if cropped_image.mode == 'RGBA':
+                cropped_image = cropped_image.convert('RGB')
+            
             cropped_image.save(output_path)
             print(f"裁剪后的图片已保存到: {output_path}")
             return cropped_image
@@ -75,36 +84,22 @@ class ImageCutter:
             print(f"保存裁剪后的图片失败: {str(e)}")
             return None
     
-    def cut_to_3_4(self):
+    def cut_to_3_4(self, output_filename=None):
         """将图片裁剪为3:4比例"""
         image = self.open_image(self.input_image_path)
         if not image:
             return None
         
         # 3:4比例的宽高比为0.75 (3/4)
-        return self.crop_image(image, 3/4, "1_3_4.jpg")
-    
-    def cut_to_3_2(self):
-        """将图片裁剪为3:2比例"""
-        image = self.open_image(self.input_image_path)
-        if not image:
-            return None
-        
-        # 3:2比例的宽高比为1.5 (3/2)
-        return self.crop_image(image, 3/2, "1_3_2.jpg")
-    
-    def cut_to_all_ratios(self):
-        """裁剪为所有需要的比例"""
-        # 裁剪为3:4比例
-        self.cut_to_3_4()
-        
-        # 裁剪为3:2比例
-        self.cut_to_3_2()
+        if output_filename:
+            return self.crop_image(image, 3/4, output_filename)
+        else:
+            # 生成默认的输出文件名
+            image_name = os.path.basename(self.input_image_path)
+            output_filename = f"{os.path.splitext(image_name)[0]}_4:3_cropped.jpg"
+            return self.crop_image(image, 3/4, output_filename)
 
 # 测试代码
 if __name__ == "__main__":
     cutter = ImageCutter()
     
-    # 将图片裁剪为3:4和3:2比例
-    print("正在裁剪图片...")
-    cutter.cut_to_all_ratios()
