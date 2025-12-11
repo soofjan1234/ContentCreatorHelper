@@ -7,8 +7,9 @@ class LoadController:
         # 获取项目根目录
         self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         self.data_dir = os.path.join(self.project_root, "data")
-        self.to_ps_dir = os.path.join(self.data_dir, "toPs")
-        self.mask_dir = os.path.join(self.data_dir, "cover", "mask")
+        self.cover_generation_dir = os.path.join(self.data_dir, "coverGeneration")
+        self.to_ps_dir = os.path.join(self.cover_generation_dir, "toPs")
+        self.mask_dir = os.path.join(self.cover_generation_dir, "cover", "mask")
     
     def load_material(self):
         """

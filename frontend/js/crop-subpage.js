@@ -146,8 +146,8 @@ window.addEventListener('DOMContentLoaded', () => {
                             const img = document.createElement('img');
                             // 根据图片名称构建图片路径，直接使用文件路径访问
                             const imageName = item.image;
-                            const ratioSuffix = '4:3'; // 固定使用3:4比例
-                            img.src = `/data/cover/crop/output_${imageName.split('.')[0]}_${ratioSuffix}_cropped.jpg`;
+                            const ratioSuffix = '4_3'; // 固定使用3:4比例，文件名中使用下划线避免Windows问题
+                            img.src = `/data/coverGeneration/cover/crop/${imageName.split('.')[0]}_${ratioSuffix}_cropped.jpg`;
                             img.alt = item.image;
                             
                             // 仅添加图片到结果项

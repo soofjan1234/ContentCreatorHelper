@@ -180,6 +180,36 @@ def publish_content(folder_name):
     else:
         return jsonify(data), 400
 
+# 保存编辑后图片API接口
+@app.route('/api/save-edited-image', methods=['POST'])
+def save_edited_image():
+    try:
+        # 获取请求数据
+        image_data = request.json.get('imageData')
+        filename = request.json.get('filename')
+        
+        if not image_data or not filename:
+            return jsonify({'success': False, 'error': '缺少必要参数'}), 400
+        
+        # 处理图片数据，移除base64前缀
+        if image_data.startswith('data:image/png;base64,'):
+            image_data = image_data.replace('data:image/png;base64,', '')
+        
+        # 解码base64数据
+        import base64
+        image_bytes = base64.b64decode(image_data)
+        
+        # 保存图片到edit目录
+        edit_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'coverGeneration', 'cover', 'edit')
+        image_path = os.path.join(edit_dir, filename)
+        
+        with open(image_path, 'wb') as f:
+            f.write(image_bytes)
+        
+        return jsonify({'success': True, 'message': '图片保存成功', 'file_path': image_path}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 if __name__ == '__main__':
     print("Starting Instagram Robot Service...")
     print("\n服务启动在 http://localhost:5001")

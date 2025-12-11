@@ -800,7 +800,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     if (textEditor) {
                         const lastSuccessResult = successResults[successResults.length - 1];
                         const imageName = lastSuccessResult.image;
-                        const maskImageSrc = `/data/output_${imageName.split('.')[0]}_with_mask.jpg`;
+                        const maskImageSrc = `/data/${imageName.split('.')[0]}_with_mask.jpg`;
                         textEditor.imageSrc = maskImageSrc;
                         textEditor.loadBackgroundImage();
                     }

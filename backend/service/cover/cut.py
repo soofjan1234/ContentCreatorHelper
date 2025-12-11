@@ -4,11 +4,12 @@ import os
 class ImageCutter:
     def __init__(self):
         # 获取项目根目录
-        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))        
         self.data_dir = os.path.join(self.project_root, "data")
+        self.cover_generation_dir = os.path.join(self.data_dir, "coverGeneration")
         self.input_image_path = os.path.join(self.data_dir, "1.jpg")
         self.output_dir = self.data_dir
-        self.crop_output_dir = os.path.join(self.data_dir, "cover", "crop")
+        self.crop_output_dir = os.path.join(self.cover_generation_dir, "cover", "crop")
         
         # 确保输出目录存在
         if not os.path.exists(self.crop_output_dir):
@@ -94,9 +95,9 @@ class ImageCutter:
         if output_filename:
             return self.crop_image(image, 3/4, output_filename)
         else:
-            # 生成默认的输出文件名
+            # 生成默认的输出文件名，将冒号替换为下划线，避免Windows文件名问题
             image_name = os.path.basename(self.input_image_path)
-            output_filename = f"{os.path.splitext(image_name)[0]}_4:3_cropped.jpg"
+            output_filename = f"{os.path.splitext(image_name)[0]}_4_3_cropped.jpg"
             return self.crop_image(image, 3/4, output_filename)
 
 # 测试代码

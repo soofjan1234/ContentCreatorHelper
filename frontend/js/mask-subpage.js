@@ -136,7 +136,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             const img = document.createElement('img');
                             // 根据图片名称构建图片路径，直接使用文件路径访问
                             const imageName = item.image;
-                            img.src = `/data/cover/mask/output_${imageName.split('.')[0]}_with_mask.jpg`;
+                            img.src = `/data/coverGeneration/cover/mask/${imageName.split('.')[0]}_with_mask.jpg`;
                             img.alt = item.image;
                             
                             // 仅添加图片到结果项

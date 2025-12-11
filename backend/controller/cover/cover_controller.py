@@ -5,9 +5,12 @@ import os
 class CoverController:
     def __init__(self):
         # 获取项目根目录
-        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+        self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))        
         self.data_dir = os.path.join(self.project_root, "data")
-        self.to_ps_dir = os.path.join(self.data_dir, "toPs")
+        self.cover_generation_dir = os.path.join(self.data_dir, "coverGeneration")
+        self.to_ps_dir = os.path.join(self.cover_generation_dir, "toPs")
+        self.mask_dir = os.path.join(self.cover_generation_dir, "cover", "mask")
+        self.crop_dir = os.path.join(self.cover_generation_dir, "cover", "crop")
         self.generator = CoverGenerator()
         self.cutter = ImageCutter()
     
@@ -55,10 +58,10 @@ class CoverController:
             for image_name in image_names:
                 try:
                     # 打开图片
-                    image_path = os.path.join(self.data_dir, "cover", "mask", image_name)
+                    image_path = os.path.join(self.mask_dir, image_name)
                     
-                    # 生成输出文件名
-                    output_filename = f"output_{os.path.splitext(image_name)[0]}_4:3_cropped.jpg"
+                    # 生成输出文件名，将冒号替换为下划线，避免Windows文件名问题
+                    output_filename = f"{os.path.splitext(image_name)[0]}_4_3_cropped.jpg"
                     
                     # 直接调用service层的cut_to_3_4方法裁剪图片
                     # 注意：cut_to_3_4方法默认使用self.input_image_path，需要修改为我们的图片路径
@@ -68,8 +71,8 @@ class CoverController:
                     # 设置为当前图片路径
                     self.cutter.input_image_path = image_path
                     
-                    # 调用cut_to_3_4方法，该方法会自动保存图片
-                    result = self.cutter.cut_to_3_4()
+                    # 调用cut_to_3_4方法，传递输出文件名
+                    result = self.cutter.cut_to_3_4(output_filename)
                     
                     # 恢复原始input_image_path
                     self.cutter.input_image_path = old_input_path
