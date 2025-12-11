@@ -1,20 +1,29 @@
-// 内容生成页JavaScript
+// 生成标题子页面JavaScript
 
 // 页面加载完成事件
 window.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
-    const titleResult = document.getElementById('title-result');
-    const hookResult = document.getElementById('hook-result');
     const backBtn = document.getElementById('back-btn');
+    const mainBtn = document.getElementById('main-btn');
     
     // 返回按钮点击事件
     backBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = '../index.html';
+    });
+    
+    // 返回主页面按钮点击事件
+    mainBtn.addEventListener('click', () => {
+        window.location.href = '../content-generator.html';
     });
     
     // 内容容器
     const materialCarousel = document.getElementById('material-carousel');
     const resultCarousel = document.getElementById('result-carousel');
+    const filterGrid = document.getElementById('filter-grid');
+    const organizeBtn = document.getElementById('organize-btn');
+    
+    // 初始禁用整理按钮
+    organizeBtn.disabled = true;
     
     // 内容数据
     let materials = [];
@@ -25,8 +34,14 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // 生成按钮点击事件
     generateBtn.addEventListener('click', () => {
-        // 调用API生成内容
-        generateContentFromAPI();
+        // 调用API生成标题
+        generateTitleFromAPI();
+    });
+    
+    // 整理按钮点击事件
+    organizeBtn.addEventListener('click', () => {
+        // 调用整理功能
+        organizeContent();
     });
     
     // 从API加载素材函数
@@ -49,7 +64,10 @@ window.addEventListener('DOMContentLoaded', () => {
                         id: index + 1,
                         title: `素材 ${index + 1}`,
                         content: block.substring(0, 50) + '...', // 截取前50个字符作为预览
-                        fullContent: block // 保存完整内容用于生成
+                        fullContent: block, // 保存完整内容用于生成
+                        // 添加筛选字段
+                        filterTitle: '',
+                        filterDesc: ''
                     }));
                     
                     // 生成素材卡片
@@ -63,21 +81,21 @@ window.addEventListener('DOMContentLoaded', () => {
             });
     }
     
-    // 从API生成内容函数
-    function generateContentFromAPI() {
+    // 从API生成标题函数
+    function generateTitleFromAPI() {
         // 禁用按钮，显示加载状态
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
         
         // 显示结果加载状态
-        showLoading('result-carousel', '正在生成内容...');
+        showLoading('result-carousel', '正在生成标题...');
         
         // 准备请求数据
         const requestData = {
             // 传递所有素材的完整内容数组
             material_contents: materials.map(m => m.fullContent),
-            // 生成类型：both（生成标题和钩子）
-            generate_type: "both"
+            // 生成类型：title（只生成标题）
+            generate_type: "title"
         };
         
         // 调用实际的内容生成API
@@ -100,24 +118,27 @@ window.addEventListener('DOMContentLoaded', () => {
                 generatedContents = data.data.results.map((result, index) => ({
                     materialIndex: result.material_index,
                     titles: result.titles || [],
-                    hooks: result.hooks || [],
                     error: result.error,
                     id: Date.now() + index
                 }));
                 
                 // 更新结果显示
                 renderResults();
+                // 生成筛选结果模块
+                renderFilterModules();
+                // 启用整理按钮
+                organizeBtn.disabled = false;
             } else {
                 showError('result-carousel', data.error);
             }
         })
         .catch(error => {
-            showError('result-carousel', `生成内容失败: ${error.message}`);
+            showError('result-carousel', `生成标题失败: ${error.message}`);
         })
         .finally(() => {
             // 恢复按钮状态
             generateBtn.disabled = false;
-            generateBtn.innerHTML = '<i class="fas fa-magic"></i> 生成内容';
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> 生成标题';
         });
     }
     
@@ -164,8 +185,6 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-
-    
     // 渲染生成结果
     function renderResults() {
         // 如果没有结果，显示默认提示
@@ -173,14 +192,11 @@ window.addEventListener('DOMContentLoaded', () => {
             resultCarousel.innerHTML = `
                 <div class="result-card" id="content-result">
                     <h3 class="result-card-title">
-                        生成的内容
+                        生成的标题
                     </h3>
                     <div class="result-content">
                         <div class="result-title" id="title-result">
-                            <p class="placeholder">点击"生成内容"按钮获取生成的标题</p>
-                        </div>
-                        <div class="result-hook" id="hook-result">
-                            <p class="placeholder">点击"生成内容"按钮获取生成的钩子</p>
+                            <p class="placeholder">点击"生成标题"按钮获取生成的标题</p>
                         </div>
                     </div>
                 </div>
@@ -211,9 +227,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 // 合并标题为一个连续的文本，并添加编号，序号之间使用换行
                 const mergedTitles = content.titles.map((title, index) => `${index + 1}. ${title}`).join('\n');
                 
-                // 合并钩子为一个连续的文本，并添加编号，序号之间使用换行
-                const mergedHooks = content.hooks.map((hook, index) => `${index + 1}. ${hook}`).join('\n');
-                
                 // 生成标题HTML
                 const titlesHtml = `
                     <div class="result-item">
@@ -221,25 +234,14 @@ window.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
                 
-                // 生成钩子HTML
-                const hooksHtml = `
-                    <div class="result-item">
-                        <p class="item-content">${mergedHooks}</p>
-                    </div>
-                `;
-                
                 card.innerHTML = `
                     <h3 class="result-card-title">
-                        素材 ${content.materialIndex} 生成的内容
+                        素材 ${content.materialIndex} 生成的标题
                     </h3>
                     <div class="result-content">
                         <div class="result-title">
                             <h4>标题</h4>
                             <div class="result-list">${titlesHtml}</div>
-                        </div>
-                        <div class="result-hook">
-                            <h4>钩子</h4>
-                            <div class="result-list">${hooksHtml}</div>
                         </div>
                     </div>
                 `;
@@ -249,5 +251,85 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-
+    // 渲染筛选结果模块
+    function renderFilterModules() {
+        // 清空筛选网格
+        filterGrid.innerHTML = '';
+        
+        // 为每个素材生成一个筛选模块
+        generatedContents.forEach((content, index) => {
+            const card = document.createElement('div');
+            card.className = 'filter-card';
+            card.innerHTML = `
+                <h3>素材 ${content.materialIndex} 筛选结果</h3>
+                <div class="filter-field">
+                    <label for="title-${index}">标题 (title)</label>
+                    <input type="text" id="title-${index}" placeholder="请输入标题" class="filter-input">
+                </div>
+                <div class="filter-field">
+                    <label for="desc-${index}">描述 (desc)</label>
+                    <textarea id="desc-${index}" placeholder="请输入描述" class="filter-textarea"></textarea>
+                </div>
+            `;
+            filterGrid.appendChild(card);
+            
+            // 为输入框添加事件监听，保存输入值到materials数组
+            const titleInput = card.querySelector(`#title-${index}`);
+            const descInput = card.querySelector(`#desc-${index}`);
+            
+            titleInput.addEventListener('input', (e) => {
+                materials[content.materialIndex - 1].filterTitle = e.target.value;
+            });
+            
+            descInput.addEventListener('input', (e) => {
+                materials[content.materialIndex - 1].filterDesc = e.target.value;
+            });
+        });
+    }
+    
+    // 整理内容函数
+    function organizeContent() {
+        // 禁用整理按钮，显示加载状态
+        organizeBtn.disabled = true;
+        organizeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 整理中...';
+        
+        // 准备请求数据
+        const requestData = {
+            materials: materials.map(material => ({
+                title: material.filterTitle,
+                desc: material.filterDesc,
+                fullContent: material.fullContent
+            }))
+        };
+        
+        // 调用整理API
+        fetch('/api/organize-content', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('网络请求失败');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('整理成功！内容已保存到data/publish目录');
+            } else {
+                alert(`整理失败：${data.error}`);
+            }
+        })
+        .catch(error => {
+            alert(`整理失败：${error.message}`);
+        })
+        .finally(() => {
+            // 恢复按钮状态
+            organizeBtn.disabled = false;
+            organizeBtn.innerHTML = '<i class="fas fa-folder-plus"></i> 整理';
+        });
+    }
 });

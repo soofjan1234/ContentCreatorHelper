@@ -1,15 +1,19 @@
-// 内容生成页JavaScript
+// 生成钩子子页面JavaScript
 
 // 页面加载完成事件
 window.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
-    const titleResult = document.getElementById('title-result');
-    const hookResult = document.getElementById('hook-result');
     const backBtn = document.getElementById('back-btn');
+    const mainBtn = document.getElementById('main-btn');
     
     // 返回按钮点击事件
     backBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
+        window.location.href = '../index.html';
+    });
+    
+    // 返回主页面按钮点击事件
+    mainBtn.addEventListener('click', () => {
+        window.location.href = '../content-generator.html';
     });
     
     // 内容容器
@@ -25,8 +29,8 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // 生成按钮点击事件
     generateBtn.addEventListener('click', () => {
-        // 调用API生成内容
-        generateContentFromAPI();
+        // 调用API生成钩子
+        generateHookFromAPI();
     });
     
     // 从API加载素材函数
@@ -63,21 +67,21 @@ window.addEventListener('DOMContentLoaded', () => {
             });
     }
     
-    // 从API生成内容函数
-    function generateContentFromAPI() {
+    // 从API生成钩子函数
+    function generateHookFromAPI() {
         // 禁用按钮，显示加载状态
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
         
         // 显示结果加载状态
-        showLoading('result-carousel', '正在生成内容...');
+        showLoading('result-carousel', '正在生成钩子...');
         
         // 准备请求数据
         const requestData = {
             // 传递所有素材的完整内容数组
             material_contents: materials.map(m => m.fullContent),
-            // 生成类型：both（生成标题和钩子）
-            generate_type: "both"
+            // 生成类型：hook（只生成钩子）
+            generate_type: "hook"
         };
         
         // 调用实际的内容生成API
@@ -99,7 +103,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 // 创建生成结果对象，包含所有素材的生成结果
                 generatedContents = data.data.results.map((result, index) => ({
                     materialIndex: result.material_index,
-                    titles: result.titles || [],
                     hooks: result.hooks || [],
                     error: result.error,
                     id: Date.now() + index
@@ -112,12 +115,12 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         })
         .catch(error => {
-            showError('result-carousel', `生成内容失败: ${error.message}`);
+            showError('result-carousel', `生成钩子失败: ${error.message}`);
         })
         .finally(() => {
             // 恢复按钮状态
             generateBtn.disabled = false;
-            generateBtn.innerHTML = '<i class="fas fa-magic"></i> 生成内容';
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> 生成钩子';
         });
     }
     
@@ -164,8 +167,6 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-
-    
     // 渲染生成结果
     function renderResults() {
         // 如果没有结果，显示默认提示
@@ -173,14 +174,11 @@ window.addEventListener('DOMContentLoaded', () => {
             resultCarousel.innerHTML = `
                 <div class="result-card" id="content-result">
                     <h3 class="result-card-title">
-                        生成的内容
+                        生成的钩子
                     </h3>
                     <div class="result-content">
-                        <div class="result-title" id="title-result">
-                            <p class="placeholder">点击"生成内容"按钮获取生成的标题</p>
-                        </div>
                         <div class="result-hook" id="hook-result">
-                            <p class="placeholder">点击"生成内容"按钮获取生成的钩子</p>
+                            <p class="placeholder">点击"生成钩子"按钮获取生成的钩子</p>
                         </div>
                     </div>
                 </div>
@@ -208,18 +206,8 @@ window.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else {
-                // 合并标题为一个连续的文本，并添加编号，序号之间使用换行
-                const mergedTitles = content.titles.map((title, index) => `${index + 1}. ${title}`).join('\n');
-                
                 // 合并钩子为一个连续的文本，并添加编号，序号之间使用换行
                 const mergedHooks = content.hooks.map((hook, index) => `${index + 1}. ${hook}`).join('\n');
-                
-                // 生成标题HTML
-                const titlesHtml = `
-                    <div class="result-item">
-                        <p class="item-content">${mergedTitles}</p>
-                    </div>
-                `;
                 
                 // 生成钩子HTML
                 const hooksHtml = `
@@ -230,13 +218,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 
                 card.innerHTML = `
                     <h3 class="result-card-title">
-                        素材 ${content.materialIndex} 生成的内容
+                        素材 ${content.materialIndex} 生成的钩子
                     </h3>
                     <div class="result-content">
-                        <div class="result-title">
-                            <h4>标题</h4>
-                            <div class="result-list">${titlesHtml}</div>
-                        </div>
                         <div class="result-hook">
                             <h4>钩子</h4>
                             <div class="result-list">${hooksHtml}</div>
@@ -248,6 +232,4 @@ window.addEventListener('DOMContentLoaded', () => {
             resultCarousel.appendChild(card);
         });
     }
-    
-
 });

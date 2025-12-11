@@ -14,7 +14,7 @@
         <header class="navbar">
             <h1 class="logo">
                 <i class="fas fa-pencil-alt"></i>
-                内容创作者助手
+                内容创作者助手 - 内容生成
             </h1>
             <button class="btn btn-back" id="back-btn">
                 <i class="fas fa-arrow-left"></i>
@@ -24,51 +24,59 @@
 
         <!-- 内容生成页面主体 -->
         <main class="content-generator">
-            <!-- 素材展示区 -->
-            <section class="material-section">
-                <h2 class="section-title">
-                    <i class="fas fa-folder-open"></i>
-                    素材展示区
-                </h2>
-                <div class="material-grid" id="material-carousel">
-                    <!-- 素材卡片将通过JavaScript动态生成 -->
+            <!-- 功能按钮区 -->
+            <section class="content-functions">
+                <div class="function-buttons">
+                    <button class="btn function-btn" id="title-btn">
+                        <i class="fas fa-heading"></i>
+                        <span>生成标题</span>
+                    </button>
+                    <button class="btn function-btn" id="hook-btn">
+                        <i class="fas fa-play-circle"></i>
+                        <span>生成钩子</span>
+                    </button>
                 </div>
             </section>
 
-            <!-- 操作区 -->
-            <section class="action-section">
-                <button class="btn btn-primary generate-btn" id="generate-btn">
-                    <i class="fas fa-magic"></i>
-                    生成内容
-                </button>
-            </section>
-
-            <!-- 结果展示区 -->
-            <section class="result-section">
-                <h2 class="section-title">
-                    <i class="fas fa-lightbulb"></i>
-                    生成结果
-                </h2>
-                <div class="result-grid" id="result-carousel">
-                    <!-- 结果卡片将通过JavaScript动态生成 -->
-                    <div class="result-card" id="content-result">
-                        <h3 class="result-card-title">
-                            生成的内容
-                        </h3>
-                        <div class="result-content">
-                            <div class="result-title" id="title-result">
-                                <p class="placeholder">点击"生成内容"按钮获取生成的标题</p>
-                            </div>
-                            <div class="result-hook" id="hook-result">
-                                <p class="placeholder">点击"生成内容"按钮获取生成的钩子</p>
-                            </div>
-                        </div>
+            <!-- 功能说明区 -->
+            <section class="content-description">
+                <div class="description-card">
+                    <h2><i class="fas fa-info-circle"></i> 内容生成功能说明</h2>
+                    <div class="description-content">
+                        <p>选择以下功能之一开始生成您的内容：</p>
+                        <ul>
+                            <li><strong>生成标题</strong>：根据素材和标题技巧生成吸引人的标题</li>
+                            <li><strong>生成钩子</strong>：根据素材和钩子技巧生成吸引人的开头钩子</li>
+                        </ul>
+                        <p>点击上方按钮进入相应功能页面，完成后可返回主页面继续其他操作。</p>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <script src="../js/content-generator.js"></script>
+    <script>
+        // 页面加载完成事件
+        window.addEventListener('DOMContentLoaded', () => {
+            const backBtn = document.getElementById('back-btn');
+            const titleBtn = document.getElementById('title-btn');
+            const hookBtn = document.getElementById('hook-btn');
+            
+            // 返回首页按钮点击事件
+            backBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+            
+            // 生成标题按钮点击事件
+            titleBtn.addEventListener('click', () => {
+                window.location.href = 'subpages/title-subpage.html';
+            });
+            
+            // 生成钩子按钮点击事件
+            hookBtn.addEventListener('click', () => {
+                window.location.href = 'subpages/hook-subpage.html';
+            });
+        });
+    </script>
 </body>
 </html>

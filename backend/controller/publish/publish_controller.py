@@ -47,6 +47,56 @@ class PublishController:
                 'message': str(e)
             }
     
+    def organize_content(self, materials):
+        """
+        整理内容，在data/publish目录下创建文件夹和文件
+        
+        Args:
+            materials: 包含标题和描述的素材列表
+            
+        Returns:
+            tuple: (成功标志, 数据/错误信息)
+        """
+        try:
+            # 检查base_path是否存在，不存在则创建
+            if not os.path.exists(self.base_path):
+                os.makedirs(self.base_path)
+            
+            # 遍历每个素材，创建文件夹和文件
+            for i, material in enumerate(materials):
+                # 使用标题作为文件夹名称，如果标题为空则使用默认名称
+                folder_name = material.get('title', f'素材_{i+1}')
+                if not folder_name:
+                    folder_name = f'素材_{i+1}'
+                
+                # 创建文件夹
+                folder_path = os.path.join(self.base_path, folder_name)
+                if not os.path.exists(folder_path):
+                    os.makedirs(folder_path)
+                
+                # 创建文件内容
+                title = material.get('title', '')
+                desc = material.get('desc', '')
+                
+                # 创建{标题}.txt文件，使用示例格式
+                file_name = f'1.txt'
+                file_path = os.path.join(folder_path, file_name)
+                
+                # 写入文件内容
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(f'title: {title}\n')
+                    f.write(f'desc: {desc}\n')
+            
+            return True, {
+                'success': True,
+                'message': '内容整理成功'
+            }
+        except Exception as e:
+            return False, {
+                'success': False,
+                'message': str(e)
+            }
+    
     def publish_content(self, folder_name):
         """
         发布内容

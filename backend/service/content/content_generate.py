@@ -20,9 +20,10 @@ class ContentCreatorService:
         self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
         # 文件路径
         self.data_dir = os.path.join(self.project_root, "data")
-        self.material_file = os.path.join(self.data_dir, "material", "1.txt")
-        self.title_tips_file = os.path.join(self.data_dir, "tip", "title.txt")
-        self.hook_tips_file = os.path.join(self.data_dir, "tip", "hook.txt")
+        self.content_gen_dir = os.path.join(self.data_dir, "contentGeneration")
+        self.material_file = os.path.join(self.content_gen_dir, "material.txt")
+        self.title_tips_file = os.path.join(self.content_gen_dir, "tip", "title.txt")
+        self.hook_tips_file = os.path.join(self.content_gen_dir, "tip", "hook.txt")
     
     def read_file(self, file_path):
         """读取文件内容"""
@@ -129,16 +130,17 @@ class ContentCreatorService:
             print(f"生成钩子失败: {str(e)}")
             return []
     
-    def create_content(self, material_content=None, title_tips=None, hook_tips=None):
+    def create_content(self, material_content=None, title_tips=None, hook_tips=None, generate_type="both"):
         """主函数：生成标题和钩子
         
         Args:
             material_content: 素材内容字符串
             title_tips: 标题技巧字符串
             hook_tips: 钩子技巧字符串
+            generate_type: 生成类型，可选值："both"（生成标题和钩子）、"title"（只生成标题）、"hook"（只生成钩子）
             
         Returns:
-            包含titles和hooks的字典
+            包含titles和/或hooks的字典
         """
         # 如果没有传入参数，从文件读取
         if not material_content:
@@ -148,18 +150,42 @@ class ContentCreatorService:
         if not hook_tips:
             hook_tips = self.read_file(self.hook_tips_file)
         
-        if not all([material_content, title_tips, hook_tips]):
-            print("无法获取必要的内容，生成内容失败")
-            return None
-        
-        # 生成标题和钩子
-        titles = self.generate_title(material_content, title_tips)
-        hooks = self.generate_hook(material_content, hook_tips)
-        
-        return {
-            "titles": titles,
-            "hooks": hooks
-        }
+        # 根据generate_type确定需要的参数
+        if generate_type == "title":
+            if not all([material_content, title_tips]):
+                print("无法获取必要的内容，生成标题失败")
+                return None
+            
+            # 只生成标题
+            titles = self.generate_title(material_content, title_tips)
+            return {
+                "titles": titles,
+                "hooks": []
+            }
+        elif generate_type == "hook":
+            if not all([material_content, hook_tips]):
+                print("无法获取必要的内容，生成钩子失败")
+                return None
+            
+            # 只生成钩子
+            hooks = self.generate_hook(material_content, hook_tips)
+            return {
+                "titles": [],
+                "hooks": hooks
+            }
+        else:  # 默认生成标题和钩子
+            if not all([material_content, title_tips, hook_tips]):
+                print("无法获取必要的内容，生成内容失败")
+                return None
+            
+            # 生成标题和钩子
+            titles = self.generate_title(material_content, title_tips)
+            hooks = self.generate_hook(material_content, hook_tips)
+            
+            return {
+                "titles": titles,
+                "hooks": hooks
+            }
 
 # 测试代码
 if __name__ == "__main__":

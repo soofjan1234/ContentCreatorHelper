@@ -7,19 +7,16 @@ class MaterialLoader:
     """
     
     def __init__(self):
-        self.base_path = os.path.join(os.path.dirname(__file__), '../../../data/material')
+        self.base_path = os.path.join(os.path.dirname(__file__), '../../../data/contentGeneration')
     
-    def load_material(self, material_id):
+    def load_material(self):
         """
-        加载指定ID的素材文件
-        
-        Args:
-            material_id: 素材ID，对应material目录下的文件名（不带.txt后缀）
+        加载素材文件
             
         Returns:
             list: 按1.、2.等格式分块后的内容数组
         """
-        file_path = os.path.join(self.base_path, f'{material_id}.txt')
+        file_path = os.path.join(self.base_path, 'material.txt')
         
         try:
             with open(file_path, 'r', encoding='utf-8') as f:

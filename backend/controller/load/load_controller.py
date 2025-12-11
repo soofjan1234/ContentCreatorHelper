@@ -10,28 +10,25 @@ class LoadController:
         self.to_ps_dir = os.path.join(self.data_dir, "toPs")
         self.mask_dir = os.path.join(self.data_dir, "cover", "mask")
     
-    def load_material(self, material_id):
+    def load_material(self):
         """
         加载指定ID的素材文件并分块返回
         
-        Args:
-            material_id (str): 素材文件ID
             
         Returns:
             tuple: (成功标志, 数据/错误信息)
         """
         try:
-            blocks = self.loader.load_material(material_id)
+            blocks = self.loader.load_material()
             return True, {
                 'success': True,
-                'material_id': material_id,
                 'blocks': blocks,
                 'total_blocks': len(blocks)
             }
         except FileNotFoundError:
             return False, {
                 'success': False,
-                'error': f'素材文件 {material_id}.txt 不存在'
+                'error': f'素材文件 material.txt 不存在'
             }
         except Exception as e:
             return False, {

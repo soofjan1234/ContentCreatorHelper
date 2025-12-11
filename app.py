@@ -32,9 +32,8 @@ def serve_data(filename):
 # 加载素材API接口
 @app.route('/api/load-material', methods=['GET'])
 def load_material():
-    material_id = request.args.get('id', default='1', type=str)
     controller = LoadController()
-    success, data = controller.load_material(material_id)
+    success, data = controller.load_material()
     if success:
         return jsonify(data), 200
     else:
@@ -47,6 +46,7 @@ def generate_content():
     material_contents = request.json.get('material_contents', [])
     title_tips = request.json.get('title_tips')
     hook_tips = request.json.get('hook_tips')
+    generate_type = request.json.get('generate_type', 'both')  # 新增：生成类型，默认生成标题和钩子
     
     # 如果是单个素材，兼容旧格式
     if not material_contents and request.json.get('material_content'):
@@ -62,13 +62,14 @@ def generate_content():
     results = []
     
     print(f"收到素材数量: {len(material_contents)}")
+    print(f"生成类型: {generate_type}")
     
     # 循环处理每个素材内容
     for i, material_content in enumerate(material_contents):
         print(f"处理素材 {i+1}")
         print(f"素材内容: {material_content[:50]}...")
         
-        success, data = controller.generate_content(material_content, title_tips, hook_tips)
+        success, data = controller.generate_content(material_content, title_tips, hook_tips, generate_type)
         if success:
             print(f"素材 {i+1} 生成成功")
             print(f"生成的标题: {data['data']['titles']}")
@@ -152,6 +153,18 @@ def generate_cropped_image():
 def get_publish_folders():
     controller = PublishController()
     success, data = controller.get_publish_folders()
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 整理内容API接口
+@app.route('/api/organize-content', methods=['POST'])
+def organize_content():
+    controller = PublishController()
+    materials = request.json.get('materials', [])
+    
+    success, data = controller.organize_content(materials)
     if success:
         return jsonify(data), 200
     else:
