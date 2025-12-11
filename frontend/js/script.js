@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'publish':
                 // 跳转到发布完善页
-                console.log('跳转到发布完善页');
+                window.location.href = 'publish-page.html';
                 break;
             case 'ad':
                 // 跳转到广告页

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布完善 - 内容创作者助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/publish-page.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header class="navbar">
+            <h1 class="logo">
+                <i class="fas fa-pencil-alt"></i>
+                内容创作者助手
+            </h1>
+            <button class="btn btn-back" id="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                返回首页
+            </button>
+        </header>
+
+        <main class="publish-container">
+            <h2 class="page-title">
+                <i class="fas fa-paper-plane"></i>
+                发布完善
+            </h2>
+            
+            <div class="status-message info" id="info-message">
+                <i class="fas fa-info-circle"></i>
+                <span>请从以下列表中选择要发布的内容文件夹</span>
+            </div>
+            
+            <div class="status-message" id="status-message"></div>
+            
+            <div class="folder-list" id="folder-list">
+                <!-- 文件夹列表将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="publish-btn" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                    发布
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/publish-page.js"></script>
+</body>
+</html>

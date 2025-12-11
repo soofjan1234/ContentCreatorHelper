@@ -4,6 +4,7 @@ import os
 from backend.controller.load.load_controller import LoadController
 from backend.controller.content.content_controller import ContentController
 from backend.controller.cover.cover_controller import CoverController
+from backend.controller.publish.publish_controller import PublishController
 
 app = Flask(__name__)
 CORS(app)
@@ -61,7 +62,6 @@ def generate_content():
     results = []
     
     print(f"收到素材数量: {len(material_contents)}")
-    print(f"素材内容: {material_contents}")
     
     # 循环处理每个素材内容
     for i, material_content in enumerate(material_contents):
@@ -142,6 +142,26 @@ def generate_cropped_image():
     # 调用controller的方法生成裁剪图片（controller内部会处理循环）
     success, data = controller.generate_cropped_image(images, aspect_ratio)
     
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 获取发布文件夹列表API接口
+@app.route('/api/publish/folders', methods=['GET'])
+def get_publish_folders():
+    controller = PublishController()
+    success, data = controller.get_publish_folders()
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 发布内容API接口
+@app.route('/api/publish/<folder_name>', methods=['POST'])
+def publish_content(folder_name):
+    controller = PublishController()
+    success, data = controller.publish_content(folder_name)
     if success:
         return jsonify(data), 200
     else:

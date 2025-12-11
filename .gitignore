@@ -11,9 +11,6 @@ dist/
 .DS_Store
 Thumbs.db
 chrome_user_data
+.trae
 
-toPublish
-toRefine
-toPS
-toGenerate
-temp_ai_images
+data
