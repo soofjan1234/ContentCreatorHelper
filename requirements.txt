@@ -3,3 +3,4 @@ openai
 pillow
 flask
 flask-cors
+google-generativeai

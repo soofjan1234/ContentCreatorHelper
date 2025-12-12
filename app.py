@@ -46,7 +46,7 @@ def generate_content():
     material_contents = request.json.get('material_contents', [])
     title_tips = request.json.get('title_tips')
     hook_tips = request.json.get('hook_tips')
-    generate_type = request.json.get('generate_type', 'both')  # 新增：生成类型，默认生成标题和钩子
+    generate_type = request.json.get('generate_type', 'both')  # 生成类型，默认生成标题和钩子
     
     # 如果是单个素材，兼容旧格式
     if not material_contents and request.json.get('material_content'):
@@ -72,14 +72,16 @@ def generate_content():
         success, data = controller.generate_content(material_content, title_tips, hook_tips, generate_type)
         if success:
             print(f"素材 {i+1} 生成成功")
-            print(f"生成的标题: {data['data']['titles']}")
-            print(f"生成的钩子: {data['data']['hooks']}")
             
-            results.append({
+            # 根据生成类型返回不同的结果
+            result_item = {
                 'material_index': i + 1,
                 'titles': data['data']['titles'],
-                'hooks': data['data']['hooks']
-            })
+                'hooks': data['data']['hooks'],
+                'content': data['data'].get('content', '')
+            }
+            
+            results.append(result_item)
         else:
             print(f"素材 {i+1} 生成失败: {data['error']}")
             results.append({

@@ -2,19 +2,19 @@ import os
 import re
 import json
 from dotenv import load_dotenv
-from openai import OpenAI
 
 # 加载环境变量
 load_dotenv()
 
+# 尝试导入Google Gemini API
+from google import genai
+
 class ContentCreatorService:
     def __init__(self):
-        # 初始化OpenAI客户端（使用火山方舟API）
-        self.client = OpenAI(
-            api_key=os.getenv("ARK_API_KEY"),
-            base_url="https://ark.cn-beijing.volces.com/api/v3"
-        )
-        self.model_name = "deepseek-v3-1-terminus"
+        # 初始化Google Gemini客户端
+        self.api_key = os.getenv("GEMINI_API_KEY", "AIzaSyCAxd3Zf0Xuh4_FEkqg7PJ-1ue3CK4tw44")
+        self.client = genai.Client(api_key=self.api_key)
+        self.model_name = "gemini-3-pro-preview"
         
         # 获取项目根目录
         self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -60,17 +60,14 @@ class ContentCreatorService:
                     - 示例格式：{{"titles": ["标题1", "标题2", "标题3"]}}
                     """
             
-            response = self.client.chat.completions.create(
+            # 使用Google Gemini API生成内容
+            response = self.client.models.generate_content(
                 model=self.model_name,
-                messages=[
-                    {"role": "system", "content": "你是一名专业的内容创作者，擅长根据素材和技巧生成吸引人的标题。"},
-                    {"role": "user", "content": prompt}
-                ],
-                response_format={"type": "json_object"}
+                contents=prompt
             )
             
             # 解析响应
-            content = response.choices[0].message.content
+            content = response.text
             result = json.loads(content)
             
             # 检查返回结果类型
@@ -108,17 +105,14 @@ class ContentCreatorService:
                         - 示例格式：{{"hooks": ["钩子1", "钩子2", "钩子3"]}}
                         """
             
-            response = self.client.chat.completions.create(
+            # 使用Google Gemini API生成内容
+            response = self.client.models.generate_content(
                 model=self.model_name,
-                messages=[
-                    {"role": "system", "content": "你是一名专业的内容创作者，擅长根据素材和技巧生成吸引人的开头钩子。"},
-                    {"role": "user", "content": prompt}
-                ],
-                response_format={"type": "json_object"}
+                contents=prompt
             )
             
             # 解析响应
-            content = response.choices[0].message.content
+            content = response.text
             result = json.loads(content)
             
             # 检查返回结果类型
@@ -130,17 +124,57 @@ class ContentCreatorService:
             print(f"生成钩子失败: {str(e)}")
             return []
     
+    def generate_optimized_content(self, material_content):
+        """优化文案内容，调用AI生成有情绪、有画面、有代入感的文案"""
+        try:
+            prompt = f"""作为一名专业的内容创作者，请根据以下素材内容，优化生成3-5条有情绪、有画面、有代入感的文案：
+
+                    【素材内容】
+                    {material_content}
+
+                    【优化要求】
+                    1. 要有情绪：能够触发读者的情感共鸣
+                    2. 要有画面：通过生动的描述让读者仿佛身临其境
+                    3. 要有代入感：让读者感觉内容就是在说他们自己
+                    4. 不只是听懂，而是被击中、想行动：激发读者的行动欲望
+                    5. 避免说教感：不要使用生硬的命令或教导语气
+                    6. 字数不用太多，和原文案相近或多一点即可
+
+                    请严格按照以下格式返回结果：
+                    - 必须是JSON格式
+                    - 必须返回一个纯字符串数组，数组名为"contents"
+                    - 每个文案必须是字符串，不能是对象或其他类型
+                    - 不要包含任何额外的解释或说明
+                    - 示例格式：{{"contents": ["内容1", "内容2", "内容3"]}}
+                    """
+            
+            # 使用Google Gemini API生成内容
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt
+            )
+            
+            # 解析AI返回的JSON内容
+            content = response.text
+            result = json.loads(content)
+            
+            # 返回生成的内容数组
+            return result.get("contents", [material_content])
+        except Exception as e:
+            print(f"优化文案失败: {str(e)}")
+            return [material_content]
+    
     def create_content(self, material_content=None, title_tips=None, hook_tips=None, generate_type="both"):
-        """主函数：生成标题和钩子
+        """主函数：生成标题、钩子或优化文案
         
         Args:
-            material_content: 素材内容字符串
+            material_content: 素材内容字符串或字符串数组
             title_tips: 标题技巧字符串
             hook_tips: 钩子技巧字符串
-            generate_type: 生成类型，可选值："both"（生成标题和钩子）、"title"（只生成标题）、"hook"（只生成钩子）
+            generate_type: 生成类型，可选值："both"（生成标题和钩子）、"title"（只生成标题）、"hook"（只生成钩子）、"content"（优化文案）
             
         Returns:
-            包含titles和/或hooks的字典
+            包含titles、hooks和/或content的字典
         """
         # 如果没有传入参数，从文件读取
         if not material_content:
@@ -160,7 +194,8 @@ class ContentCreatorService:
             titles = self.generate_title(material_content, title_tips)
             return {
                 "titles": titles,
-                "hooks": []
+                "hooks": [],
+                "content": ""
             }
         elif generate_type == "hook":
             if not all([material_content, hook_tips]):
@@ -171,8 +206,34 @@ class ContentCreatorService:
             hooks = self.generate_hook(material_content, hook_tips)
             return {
                 "titles": [],
-                "hooks": hooks
+                "hooks": hooks,
+                "content": ""
             }
+        elif generate_type == "content":
+            if not material_content:
+                print("无法获取必要的内容，优化文案失败")
+                return None
+            
+            # 优化文案
+            if isinstance(material_content, list):
+                # 多个素材，生成多个优化文案
+                all_optimized_contents = []
+                for content in material_content:
+                    optimized_contents = self.generate_optimized_content(content)
+                    all_optimized_contents.extend(optimized_contents)
+                return {
+                    "titles": [],
+                    "hooks": [],
+                    "content": all_optimized_contents
+                }
+            else:
+                # 单个素材，生成单个优化文案
+                optimized_content = self.generate_optimized_content(material_content)
+                return {
+                    "titles": [],
+                    "hooks": [],
+                    "content": optimized_content
+                }
         else:  # 默认生成标题和钩子
             if not all([material_content, title_tips, hook_tips]):
                 print("无法获取必要的内容，生成内容失败")
@@ -184,7 +245,8 @@ class ContentCreatorService:
             
             return {
                 "titles": titles,
-                "hooks": hooks
+                "hooks": hooks,
+                "content": ""
             }
 
 # 测试代码

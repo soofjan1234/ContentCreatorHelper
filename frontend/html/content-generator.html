@@ -27,13 +27,17 @@
             <!-- 功能按钮区 -->
             <section class="content-functions">
                 <div class="function-buttons">
-                    <button class="btn function-btn" id="title-btn">
-                        <i class="fas fa-heading"></i>
-                        <span>生成标题</span>
+                    <button class="btn function-btn" id="optimize-btn">
+                        <i class="fas fa-pen-nib"></i>
+                        <span>优化文案</span>
                     </button>
                     <button class="btn function-btn" id="hook-btn">
                         <i class="fas fa-play-circle"></i>
                         <span>生成钩子</span>
+                    </button>
+                    <button class="btn function-btn" id="title-btn">
+                        <i class="fas fa-heading"></i>
+                        <span>生成标题</span>
                     </button>
                 </div>
             </section>
@@ -45,8 +49,9 @@
                     <div class="description-content">
                         <p>选择以下功能之一开始生成您的内容：</p>
                         <ul>
-                            <li><strong>生成标题</strong>：根据素材和标题技巧生成吸引人的标题</li>
+                            <li><strong>优化文案</strong>：根据素材优化现有文案，提升吸引力和专业性</li>
                             <li><strong>生成钩子</strong>：根据素材和钩子技巧生成吸引人的开头钩子</li>
+                            <li><strong>生成标题</strong>：根据素材和标题技巧生成吸引人的标题</li>
                         </ul>
                         <p>点击上方按钮进入相应功能页面，完成后可返回主页面继续其他操作。</p>
                     </div>
@@ -61,10 +66,16 @@
             const backBtn = document.getElementById('back-btn');
             const titleBtn = document.getElementById('title-btn');
             const hookBtn = document.getElementById('hook-btn');
+            const optimizeBtn = document.getElementById('optimize-btn');
             
             // 返回首页按钮点击事件
             backBtn.addEventListener('click', () => {
                 window.location.href = 'index.html';
+            });
+            
+            // 优化文案按钮点击事件
+            optimizeBtn.addEventListener('click', () => {
+                window.location.href = 'subpages/content-subpage.html';
             });
             
             // 生成标题按钮点击事件
