@@ -5,39 +5,47 @@ window.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
     const backBtn = document.getElementById('back-btn');
     const mainBtn = document.getElementById('main-btn');
-    
+
     // 返回按钮点击事件
     backBtn.addEventListener('click', () => {
         window.location.href = '../index.html';
     });
-    
+
     // 返回主页面按钮点击事件
     mainBtn.addEventListener('click', () => {
         window.location.href = '../content-generator.html';
     });
-    
+
+    // 生成钩子按钮点击事件
+    const goToHookBtn = document.getElementById('go-to-hook-btn');
+    if (goToHookBtn) {
+        goToHookBtn.addEventListener('click', () => {
+            window.location.href = 'hook-subpage.html';
+        });
+    }
+
     // 内容容器
     const materialCarousel = document.getElementById('material-carousel');
     const resultCarousel = document.getElementById('result-carousel');
-    
+
     // 内容数据
     let materials = [];
     let generatedContents = [];
-    
+
     // 页面加载时动态加载素材
     loadMaterialsFromAPI();
-    
+
     // 生成按钮点击事件
     generateBtn.addEventListener('click', () => {
         // 调用API生成优化文案
         generateContentFromAPI();
     });
-    
+
     // 从API加载素材函数
     function loadMaterialsFromAPI() {
         // 显示加载状态
         showLoading('material-carousel', '正在加载素材...');
-        
+
         // 调用API获取素材
         fetch('/api/load-material')
             .then(response => {
@@ -55,7 +63,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         content: block.substring(0, 50) + '...', // 截取前50个字符作为预览
                         fullContent: block // 保存完整内容用于生成
                     }));
-                    
+
                     // 生成素材卡片
                     renderMaterialCards();
                 } else {
@@ -66,16 +74,16 @@ window.addEventListener('DOMContentLoaded', () => {
                 showError('material-carousel', `加载素材失败: ${error.message}`);
             });
     }
-    
+
     // 从API生成优化文案函数
     function generateContentFromAPI() {
         // 禁用按钮，显示加载状态
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 生成中...';
-        
+
         // 显示结果加载状态
         showLoading('result-carousel', '正在优化文案...');
-        
+
         // 准备请求数据
         const requestData = {
             // 传递所有素材的完整内容数组
@@ -83,7 +91,7 @@ window.addEventListener('DOMContentLoaded', () => {
             // 生成类型：content（优化文案）
             generate_type: "content"
         };
-        
+
         // 调用实际的内容生成API
         fetch('/api/generate-content', {
             method: 'POST',
@@ -92,38 +100,38 @@ window.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify(requestData)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('网络请求失败');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // 创建生成结果对象，包含所有素材的生成结果
-                generatedContents = data.data.results.map((result, index) => ({
-                    materialIndex: result.material_index,
-                    content: result.content || '',
-                    error: result.error,
-                    id: Date.now() + index
-                }));
-                
-                // 更新结果显示
-                renderResults();
-            } else {
-                showError('result-carousel', data.error);
-            }
-        })
-        .catch(error => {
-            showError('result-carousel', `优化文案失败: ${error.message}`);
-        })
-        .finally(() => {
-            // 恢复按钮状态
-            generateBtn.disabled = false;
-            generateBtn.innerHTML = '<i class="fas fa-magic"></i> 优化文案';
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络请求失败');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // 创建生成结果对象，包含所有素材的生成结果
+                    generatedContents = data.data.results.map((result, index) => ({
+                        materialIndex: result.material_index,
+                        content: result.content || '',
+                        error: result.error,
+                        id: Date.now() + index
+                    }));
+
+                    // 更新结果显示
+                    renderResults();
+                } else {
+                    showError('result-carousel', data.error);
+                }
+            })
+            .catch(error => {
+                showError('result-carousel', `优化文案失败: ${error.message}`);
+            })
+            .finally(() => {
+                // 恢复按钮状态
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> 优化文案';
+            });
     }
-    
+
     // 显示加载状态
     function showLoading(elementSelector, message) {
         const element = document.querySelector(`#${elementSelector}`) || document.querySelector(elementSelector);
@@ -136,7 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
         }
     }
-    
+
     // 显示错误信息
     function showError(elementSelector, message) {
         const element = document.querySelector(`#${elementSelector}`) || document.querySelector(elementSelector);
@@ -149,11 +157,11 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
         }
     }
-    
+
     // 生成素材卡片
     function renderMaterialCards() {
         materialCarousel.innerHTML = '';
-        
+
         materials.forEach(material => {
             const card = document.createElement('div');
             card.className = 'material-card';
@@ -166,7 +174,7 @@ window.addEventListener('DOMContentLoaded', () => {
             materialCarousel.appendChild(card);
         });
     }
-    
+
     // 渲染生成结果
     function renderResults() {
         // 如果没有结果，显示默认提示
@@ -185,15 +193,15 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
             return;
         }
-        
+
         // 清空结果网格
         resultCarousel.innerHTML = '';
-        
+
         // 生成结果卡片
         generatedContents.forEach(content => {
             const card = document.createElement('div');
             card.className = 'result-card';
-            
+
             // 检查是否有错误
             if (content.error) {
                 card.innerHTML = `
@@ -226,7 +234,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `;
                 }
-                
+
                 card.innerHTML = `
                     <h3 class="result-card-title">
                         素材 ${content.materialIndex} 优化后的文案
@@ -239,7 +247,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }
-            
+
             resultCarousel.appendChild(card);
         });
     }

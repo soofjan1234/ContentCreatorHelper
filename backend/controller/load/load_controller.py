@@ -10,6 +10,7 @@ class LoadController:
         self.cover_generation_dir = os.path.join(self.data_dir, "coverGeneration")
         self.to_ps_dir = os.path.join(self.cover_generation_dir, "toPs")
         self.mask_dir = os.path.join(self.cover_generation_dir, "cover", "mask")
+        self.crop_dir = os.path.join(self.cover_generation_dir, "cover", "crop")
     
     def load_material(self):
         """
@@ -66,6 +67,27 @@ class LoadController:
             
             # 过滤出图片文件（根据扩展名）
             image_files = [f for f in files if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp"))]
+            
+            return True, {"images": image_files}
+
+        except Exception as e:
+            return False, {"error": str(e)}
+
+    def get_cropped_images(self):
+        """获取data/cover/crop目录下的图片列表"""
+        try:
+            # 检查目录是否存在
+            if not os.path.exists(self.crop_dir):
+                return False, {"error": "目录不存在"}
+            
+            # 获取目录下所有文件
+            files = os.listdir(self.crop_dir)
+            
+            # 过滤出图片文件（根据扩展名）
+            image_files = [f for f in files if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".bmp"))]
+            
+            # 按文件名排序，确保顺序稳定
+            image_files.sort()
             
             return True, {"images": image_files}
         except Exception as e:

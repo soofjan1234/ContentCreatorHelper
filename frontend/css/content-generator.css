@@ -127,16 +127,16 @@
         width: 100%;
         max-width: 300px;
     }
-    
+
     .function-btn {
         justify-content: center;
         width: 100%;
     }
-    
+
     .description-card {
         padding: 20px;
     }
-    
+
     .description-card h2 {
         font-size: 20px;
     }
@@ -328,7 +328,8 @@
 }
 
 /* 标题和钩子之间的分界线 */
-.result-title, .result-hook {
+.result-title,
+.result-hook {
     margin-bottom: 20px;
     padding: 15px;
     border: 1px solid rgba(74, 144, 226, 0.5);
@@ -351,20 +352,24 @@
 }
 
 /* 标题和钩子内容样式 */
-.result-title h4, .result-hook h4 {
+.result-title h4,
+.result-hook h4 {
     font-size: 16px;
     color: #4a90e2;
     margin-bottom: 10px;
     font-weight: 600;
 }
 
-.result-title p, .result-hook p {
+.result-title p,
+.result-hook p {
     font-size: 14px;
     color: #e0e0e0;
     line-height: 1.6;
     margin: 0;
-    white-space: pre-wrap; /* 确保换行符能够正确显示 */
-    word-wrap: break-word; /* 防止长单词溢出 */
+    white-space: pre-wrap;
+    /* 确保换行符能够正确显示 */
+    word-wrap: break-word;
+    /* 防止长单词溢出 */
 }
 
 /* 结果列表样式 */
@@ -451,27 +456,36 @@
 
 /* 旋转动画 */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* 整合后的结果卡片内部样式 */
-.result-title, .result-hook {
+.result-title,
+.result-hook {
     margin-bottom: 20px;
 }
 
-.result-title:last-child, .result-hook:last-child {
+.result-title:last-child,
+.result-hook:last-child {
     margin-bottom: 0;
 }
 
-.result-title h4, .result-hook h4 {
+.result-title h4,
+.result-hook h4 {
     color: #4a90e2;
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: 600;
 }
 
-.result-title p, .result-hook p {
+.result-title p,
+.result-hook p {
     color: #b0c4de;
     line-height: 1.6;
     margin: 0;
@@ -536,7 +550,8 @@
     font-weight: 500;
 }
 
-.filter-field input, .filter-field textarea {
+.filter-field input,
+.filter-field textarea {
     width: 100%;
     padding: 12px;
     background: rgba(74, 144, 226, 0.05);
@@ -547,7 +562,8 @@
     resize: vertical;
 }
 
-.filter-field input:focus, .filter-field textarea:focus {
+.filter-field input:focus,
+.filter-field textarea:focus {
     outline: none;
     border-color: #4a90e2;
     box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
@@ -615,4 +631,48 @@
     transform: none;
     box-shadow: none;
     opacity: 0.7;
+}
+
+/* 画布网格布局 */
+.canvas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 强制3列 */
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1400px;
+    /* 限制最大宽度，避免太大 */
+    margin: 0 auto;
+}
+
+.canvas-wrapper {
+    background: #f5f5f5;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    /* 保持1:1或根据内容调整，这里设为正方形容器 */
+    width: 100%;
+}
+
+/* 响应式调整：屏幕较窄时回退到2列或1列 */
+@media (max-width: 1024px) {
+    .canvas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .canvas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 确保canvas容器正确显示 */
+.canvas-container {
+    width: 100%;
 }

@@ -5,6 +5,7 @@ from backend.controller.load.load_controller import LoadController
 from backend.controller.content.content_controller import ContentController
 from backend.controller.cover.cover_controller import CoverController
 from backend.controller.publish.publish_controller import PublishController
+from backend.controller.clean.clean_controller import CleanController
 
 app = Flask(__name__)
 CORS(app)
@@ -44,8 +45,7 @@ def load_material():
 def generate_content():
     # 获取请求参数
     material_contents = request.json.get('material_contents', [])
-    title_tips = request.json.get('title_tips')
-    hook_tips = request.json.get('hook_tips')
+    # 前端不再传递 title_tips 和 hook_tips，由后端自动读取
     generate_type = request.json.get('generate_type', 'both')  # 生成类型，默认生成标题和钩子
     
     # 如果是单个素材，兼容旧格式
@@ -69,7 +69,8 @@ def generate_content():
         print(f"处理素材 {i+1}")
         print(f"素材内容: {material_content[:50]}...")
         
-        success, data = controller.generate_content(material_content, title_tips, hook_tips, generate_type)
+        # 调用 controller，不再传递 tips 参数
+        success, data = controller.generate_content(material_content, generate_type=generate_type)
         if success:
             print(f"素材 {i+1} 生成成功")
             
@@ -112,6 +113,16 @@ def get_to_ps_images():
 def get_mask_images():
     controller = LoadController()
     success, data = controller.get_mask_images()
+    if success:
+        return jsonify(data), 200
+    else:
+        return jsonify(data), 400
+
+# 获取裁剪图片列表API接口
+@app.route('/api/get_cropped_images', methods=['GET'])
+def get_cropped_images():
+    controller = LoadController()
+    success, data = controller.get_cropped_images()
     if success:
         return jsonify(data), 200
     else:
@@ -211,6 +222,16 @@ def save_edited_image():
         return jsonify({'success': True, 'message': '图片保存成功', 'file_path': image_path}), 200
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
+# 清理数据API接口
+@app.route('/api/clean-data', methods=['POST'])
+def clean_data():
+    controller = CleanController()
+    success, data = controller.clean_all()
+    if success:
+        return jsonify({'success': True, 'data': data}), 200
+    else:
+        return jsonify({'success': False, 'error': str(data)}), 500
 
 if __name__ == '__main__':
     print("Starting Instagram Robot Service...")

@@ -4,7 +4,12 @@ import json
 from dotenv import load_dotenv
 
 # 加载环境变量
-load_dotenv()
+# 计算项目根目录，确保能找到 .env 文件
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# math: content_generate.py -> content -> service -> backend -> root (4 levels)
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))))
+env_path = os.path.join(project_root, '.env')
+load_dotenv(dotenv_path=env_path)
 
 # 尝试导入Google Gemini API
 from google import genai
@@ -33,6 +38,20 @@ class ContentCreatorService:
         except Exception as e:
             print(f"读取文件 {file_path} 失败: {str(e)}")
             return None
+
+    def _parse_json_response(self, response_text):
+        """解析可能包含Markdown格式的JSON响应"""
+        content = response_text.strip()
+        # 清理Markdown代码块标记
+        if content.startswith("```json"):
+            content = content[7:]
+        elif content.startswith("```"):
+            content = content[3:]
+        
+        if content.endswith("```"):
+            content = content[:-3]
+            
+        return json.loads(content.strip())
     
     def generate_title(self, material_content, title_tips):
         """根据素材和标题技巧生成标题"""
@@ -67,8 +86,7 @@ class ContentCreatorService:
             )
             
             # 解析响应
-            content = response.text
-            result = json.loads(content)
+            result = self._parse_json_response(response.text)
             
             # 检查返回结果类型
             if isinstance(result, list):
@@ -112,8 +130,7 @@ class ContentCreatorService:
             )
             
             # 解析响应
-            content = response.text
-            result = json.loads(content)
+            result = self._parse_json_response(response.text)
             
             # 检查返回结果类型
             if isinstance(result, list):
@@ -127,7 +144,7 @@ class ContentCreatorService:
     def generate_optimized_content(self, material_content):
         """优化文案内容，调用AI生成有情绪、有画面、有代入感的文案"""
         try:
-            prompt = f"""作为一名专业的内容创作者，请根据以下素材内容，优化生成3-5条有情绪、有画面、有代入感的文案：
+            prompt = f"""作为一名专业的内容创作者，请根据以下素材内容，生成相应的1条有情绪、有画面、有代入感的文案：
 
                     【素材内容】
                     {material_content}
@@ -145,7 +162,7 @@ class ContentCreatorService:
                     - 必须返回一个纯字符串数组，数组名为"contents"
                     - 每个文案必须是字符串，不能是对象或其他类型
                     - 不要包含任何额外的解释或说明
-                    - 示例格式：{{"contents": ["内容1", "内容2", "内容3"]}}
+                    - 示例格式：{{"contents": ["内容1"]}}
                     """
             
             # 使用Google Gemini API生成内容
@@ -155,8 +172,8 @@ class ContentCreatorService:
             )
             
             # 解析AI返回的JSON内容
-            content = response.text
-            result = json.loads(content)
+            result = self._parse_json_response(response.text)
+            print(result)
             
             # 返回生成的内容数组
             return result.get("contents", [material_content])
@@ -179,13 +196,13 @@ class ContentCreatorService:
         # 如果没有传入参数，从文件读取
         if not material_content:
             material_content = self.read_file(self.material_file)
-        if not title_tips:
-            title_tips = self.read_file(self.title_tips_file)
-        if not hook_tips:
-            hook_tips = self.read_file(self.hook_tips_file)
+
         
         # 根据generate_type确定需要的参数
         if generate_type == "title":
+            if not title_tips:
+                title_tips = self.read_file(self.title_tips_file)
+                
             if not all([material_content, title_tips]):
                 print("无法获取必要的内容，生成标题失败")
                 return None
@@ -198,6 +215,9 @@ class ContentCreatorService:
                 "content": ""
             }
         elif generate_type == "hook":
+            if not hook_tips:
+                hook_tips = self.read_file(self.hook_tips_file)
+                
             if not all([material_content, hook_tips]):
                 print("无法获取必要的内容，生成钩子失败")
                 return None
@@ -210,6 +230,7 @@ class ContentCreatorService:
                 "content": ""
             }
         elif generate_type == "content":
+            # ... (content loading logic remains same)
             if not material_content:
                 print("无法获取必要的内容，优化文案失败")
                 return None
@@ -235,6 +256,11 @@ class ContentCreatorService:
                     "content": optimized_content
                 }
         else:  # 默认生成标题和钩子
+            if not title_tips:
+                title_tips = self.read_file(self.title_tips_file)
+            if not hook_tips:
+                hook_tips = self.read_file(self.hook_tips_file)
+                
             if not all([material_content, title_tips, hook_tips]):
                 print("无法获取必要的内容，生成内容失败")
                 return None

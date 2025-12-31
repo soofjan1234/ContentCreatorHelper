@@ -65,9 +65,7 @@ class PublishController:
             # 遍历每个素材，创建文件夹和文件
             for i, material in enumerate(materials):
                 # 使用标题作为文件夹名称，如果标题为空则使用默认名称
-                folder_name = material.get('title', f'素材_{i+1}')
-                if not folder_name:
-                    folder_name = f'素材_{i+1}'
+                folder_name = f'素材_{i+1}'
                 
                 # 创建文件夹
                 folder_path = os.path.join(self.base_path, folder_name)

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <div class="container">
         <!-- 顶部导航栏 -->
@@ -58,7 +60,13 @@
                     <button class="close-btn" id="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p>确定要清空data/material和data/tip目录下的所有文件吗？</p>
+                    <p>确定要执行清理操作吗？</p>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                        包含以下目录：<br>
+                        - data/contentGeneration/tip (txt文件)<br>
+                        - data/coverGeneration (所有图片)<br>
+                        - publish (所有文件)
+                    </p>
                     <p class="warning">此操作不可恢复！</p>
                 </div>
                 <div class="modal-footer">
@@ -77,4 +85,5 @@
 
     <script src="../js/script.js"></script>
 </body>
+
 </html>
