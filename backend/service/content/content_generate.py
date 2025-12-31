@@ -12,7 +12,7 @@ from google import genai
 class ContentCreatorService:
     def __init__(self):
         # 初始化Google Gemini客户端
-        self.api_key = os.getenv("GEMINI_API_KEY", "AIzaSyCAxd3Zf0Xuh4_FEkqg7PJ-1ue3CK4tw44")
+        self.api_key = os.getenv("GEMINI_API_KEY")
         self.client = genai.Client(api_key=self.api_key)
         self.model_name = "gemini-3-pro-preview"
         
