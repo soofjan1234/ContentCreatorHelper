@@ -79,7 +79,7 @@ def connect_to_extension(folder_name):
         base_path = os.path.join(script_dir, 'data', 'publish', folder_name)
         
         # 动态获取文件路径
-        content_file = f"{base_path}/content.txt"
+        content_file = f"{base_path}/1.txt"
         
         # 查找视频文件（支持 .MOV 和 .mov 后缀）
         video_file = None

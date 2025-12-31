@@ -115,11 +115,11 @@ class PublishController:
                 }
             
             # 检查文件夹中是否有必要的文件
-            content_file = os.path.join(folder_path, 'content.txt')
+            content_file = os.path.join(folder_path, '1.txt')
             if not os.path.exists(content_file):
                 return False, {
                     'success': False,
-                    'message': f'文件夹 {folder_name} 中缺少 content.txt 文件'
+                    'message': f'文件夹 {folder_name} 中缺少 1.txt 文件'
                 }
             
             # 检查是否有视频文件
